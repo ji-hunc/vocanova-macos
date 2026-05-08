@@ -1,0 +1,51 @@
+{
+  "searchResultMap": {
+    "searchResultListMap": {
+      "WORD": {
+        "items": [
+          {
+            "handleEntry": "navigate",
+            "sourceDictnameKO": "옥스퍼드 영한사전",
+            "frequencyAdd": "Oxford",
+            "hasIdiom": 0,
+            "hasImage": 0,
+            "entryImageURL": [],
+            "expSynonym": "steer^https://en.dict.naver.com/#/entry/enko/abc|guide^https://en.dict.naver.com/#/entry/enko/def",
+            "expAntonym": "",
+            "searchPhoneticSymbolList": [
+              {
+                "symbolType": "미국식",
+                "symbolValue": "ˈnæ<sub>│</sub>vəˌ<sup>│</sup>geɪt",
+                "symbolFile": "https://dictionary.cdn.naver.com/sample/us.mp3"
+              },
+              {
+                "symbolType": "영국식",
+                "symbolValue": "ˈnævɪɡeɪt",
+                "symbolFile": "https://dictionary.cdn.naver.com/sample/uk.mp3"
+              }
+            ],
+            "meansCollector": [
+              {
+                "partOfSpeech": "동사",
+                "means": [
+                  {
+                    "order": "1",
+                    "value": "(지도·나침반 등으로) 길을 찾다, 방향을 안내하다",
+                    "exampleOri": "He <strong>navigated</strong> the ship through the storm.",
+                    "exampleTrans": "그는 폭풍을 뚫고 배의 항로를 잡았다."
+                  },
+                  {
+                    "order": "2",
+                    "value": "(어려운 상황을) 헤쳐 나가다",
+                    "exampleOri": "She had to <strong>navigate</strong> a complex bureaucracy.",
+                    "exampleTrans": "그녀는 복잡한 관료 체계를 헤쳐 나가야 했다."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

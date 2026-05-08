@@ -1,0 +1,85 @@
+name: VocaNovaApp
+options:
+  bundleIdPrefix: app.vocanova
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  xcodeVersion: "15.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+    DEVELOPMENT_TEAM: ""             # ← Xcode에서 본인 팀으로 변경
+    ENABLE_HARDENED_RUNTIME: YES
+    CODE_SIGN_STYLE: Automatic
+    CODE_SIGN_IDENTITY: "Apple Development"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+
+packages:
+  KeyboardShortcuts:
+    url: https://github.com/sindresorhus/KeyboardShortcuts
+    from: 2.0.0
+
+targets:
+  VocaNovaApp:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: VocaNovaApp
+        excludes:
+          - Resources/Info.plist
+          - Resources/VocaNovaApp.entitlements
+    resources:
+      - VocaNovaApp/Resources/Assets.xcassets
+    info:
+      path: VocaNovaApp/Resources/Info.plist
+      properties:
+        LSUIElement: true
+        LSMinimumSystemVersion: "14.0"
+        ITSAppUsesNonExemptEncryption: false
+        NSHumanReadableCopyright: "© 2026 VocaNova"
+        CFBundleDisplayName: VocaNova
+        CFBundleShortVersionString: "1.0.0"
+        CFBundleVersion: "1"
+        CFBundleURLTypes:
+          - CFBundleURLName: app.vocanova.callback
+            CFBundleTypeRole: Viewer
+            CFBundleURLSchemes:
+              - vocanova
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.vocanova.macos
+        CODE_SIGN_ENTITLEMENTS: VocaNovaApp/Resources/VocaNovaApp.entitlements
+        ENABLE_HARDENED_RUNTIME: YES
+        ENABLE_APP_SANDBOX: NO
+        GENERATE_INFOPLIST_FILE: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    dependencies:
+      - package: KeyboardShortcuts
+
+  VocaNovaAppTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - VocaNovaAppTests
+    settings:
+      base:
+        BUNDLE_LOADER: $(TEST_HOST)
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/VocaNovaApp.app/Contents/MacOS/VocaNovaApp
+    dependencies:
+      - target: VocaNovaApp
+
+schemes:
+  VocaNovaApp:
+    build:
+      targets:
+        VocaNovaApp: all
+        VocaNovaAppTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - VocaNovaAppTests
