@@ -39,6 +39,19 @@ struct GeneralSettingsTab: View {
                     .foregroundStyle(.secondary)
             }
 
+            Section("외관") {
+                Picker("테마", selection: $viewModel.appearance) {
+                    ForEach(AppearanceMode.allCases) { mode in
+                        Text(mode.displayName).tag(mode)
+                    }
+                }
+                .pickerStyle(.segmented)
+
+                Text("‘자동’은 시스템 설정의 라이트/다크 모드를 따라가요.")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+            }
+
             Section("권한") {
                 HStack {
                     Image(systemName: viewModel.isAXTrusted ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")

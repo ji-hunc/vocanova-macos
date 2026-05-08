@@ -56,6 +56,16 @@ final class SettingsViewModel: ObservableObject {
         }
     }
 
+    /// 앱 외관 모드 — 자동/라이트/다크. `NSApp.appearance`를 갱신하면 열려 있는
+    /// 모든 윈도우(설정/팝업)가 즉시 다시 그려진다.
+    @Published var appearance: AppearanceMode {
+        didSet {
+            guard !isApplying else { return }
+            Config.UD.setString(appearance.rawValue, forKey: Config.UD.appearanceMode)
+            NSApp.appearance = appearance.nsAppearance
+        }
+    }
+
     /// SMAppService 호출 결과 에러 메시지(`requiresApproval`도 포함). UI에서 빨간 텍스트로 노출.
     @Published var launchAtLoginError: String?
 
@@ -82,6 +92,8 @@ final class SettingsViewModel: ObservableObject {
         self.launchAtLoginEnabled = launchAtLogin.isEnabled
         self.showMenuBarIcon = Config.UD.bool(Config.UD.showMenuBarIcon, default: true)
         self.hotkeyEnabled = Config.UD.bool(Config.UD.hotkeyEnabled, default: true)
+        let appearanceRaw = Config.UD.string(Config.UD.appearanceMode, default: AppearanceMode.system.rawValue)
+        self.appearance = AppearanceMode(rawValue: appearanceRaw) ?? .system
 
         // 설정창이 열릴 때 OS의 launchAtLogin 상태가 변경되었을 수 있어 한 번 동기화.
         if launchAtLogin.requiresApproval {

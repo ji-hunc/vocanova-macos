@@ -4,6 +4,7 @@ import SwiftUI
 /// 미로그인 상태에서 "단어장에 저장"을 누르면 표시되는 인라인 카드.
 struct LoginMenu: View {
     @ObservedObject var auth: AuthViewModel
+    @Environment(\.colorScheme) private var colorScheme
     let onClose: () -> Void
 
     var body: some View {
@@ -35,7 +36,8 @@ struct LoginMenu: View {
                 // 동일.
             }
             .frame(height: 32)
-            .signInWithAppleButtonStyle(.black)
+            // 다크에선 흰 외곽선 스타일이 Apple HIG 권장 — 검정은 어두운 배경에 묻힘.
+            .signInWithAppleButtonStyle(colorScheme == .dark ? .whiteOutline : .black)
             .overlay(
                 // 시스템 콜백 대신 우리 인증 플로우 사용.
                 Button {
@@ -59,7 +61,7 @@ struct LoginMenu: View {
                 .foregroundStyle(Theme.primaryText)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 8)
-                .background(Color.white, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .background(Theme.surface, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 6, style: .continuous)
                         .stroke(Theme.border, lineWidth: 1)
@@ -82,7 +84,7 @@ struct LoginMenu: View {
             }
         }
         .padding(12)
-        .background(Color.white, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .background(Theme.surface, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
                 .stroke(Theme.border, lineWidth: 1)

@@ -20,6 +20,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         log.info("VocaNovaApp launching")
 
+        // Appearance를 다른 UI 생성보다 먼저 적용 — 첫 프레임부터 올바른 색으로 그려야
+        // 다크/라이트 깜빡임이 없다.
+        let appearanceRaw = Config.UD.string(Config.UD.appearanceMode, default: AppearanceMode.system.rawValue)
+        NSApp.appearance = (AppearanceMode(rawValue: appearanceRaw) ?? .system).nsAppearance
+
         environment = AppEnvironment()
         popupController = PopupWindowController(environment: environment)
 

@@ -1,6 +1,32 @@
 import AppKit
 import KeyboardShortcuts
 
+/// 앱 외관 모드. 사용자가 설정에서 고정하거나 시스템(.system)을 따라가게 할 수 있다.
+///
+/// `nsAppearance`를 `NSApp.appearance`에 대입하면 모든 윈도우(메뉴/팝업/설정)가
+/// 즉시 새 appearance로 다시 그려진다. `.system`은 nil을 돌려 OS 설정을 그대로 따름.
+enum AppearanceMode: String, CaseIterable, Identifiable {
+    case system, light, dark
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .system: return "자동"
+        case .light:  return "라이트"
+        case .dark:   return "다크"
+        }
+    }
+
+    var nsAppearance: NSAppearance? {
+        switch self {
+        case .system: return nil
+        case .light:  return NSAppearance(named: .aqua)
+        case .dark:   return NSAppearance(named: .darkAqua)
+        }
+    }
+}
+
 /// 앱 전역 설정 상수.
 ///
 /// 모든 외부 엔드포인트, 공개 키, 기본값을 한 곳에 모은다. 빌드 환경별(Debug/Release)
@@ -74,6 +100,7 @@ enum Config {
         static let showMenuBarIcon = "settings.showMenuBarIcon"
         static let hotkeyEnabled = "settings.hotkeyEnabled"
         static let didConfirmMenuBarHide = "settings.didConfirmMenuBarHide"
+        static let appearanceMode = "settings.appearanceMode"
 
         /// "키 없음"과 "false"를 구분 — `object(forKey:)`가 nil이면 default 반환.
         static func bool(_ key: String, default def: Bool) -> Bool {
@@ -83,6 +110,14 @@ enum Config {
         }
 
         static func setBool(_ value: Bool, forKey key: String) {
+            UserDefaults.standard.set(value, forKey: key)
+        }
+
+        static func string(_ key: String, default def: String) -> String {
+            UserDefaults.standard.string(forKey: key) ?? def
+        }
+
+        static func setString(_ value: String, forKey key: String) {
             UserDefaults.standard.set(value, forKey: key)
         }
     }
