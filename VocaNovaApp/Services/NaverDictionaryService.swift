@@ -40,6 +40,7 @@ final class NaverDictionaryService {
     ///
     /// - 양 끝 공백/문장부호 제거
     /// - 너무 길면 첫 줄, 첫 5단어로 자름 (extension의 정책과 동일)
+    /// - **모두 소문자로 변환** — 사전 lemma는 소문자라 "Apple"/"APPLE" → "apple"로 정규화해야 일관된 hit rate.
     private func sanitize(_ raw: String) -> String {
         var s = raw.trimmingCharacters(in: .whitespacesAndNewlines)
         s = s.trimmingCharacters(in: CharacterSet(charactersIn: ".,!?;:\"'()[]{}<>—–"))
@@ -50,6 +51,6 @@ final class NaverDictionaryService {
         if words.count > 5 {
             s = words.prefix(1).joined(separator: " ")
         }
-        return s
+        return s.lowercased()
     }
 }

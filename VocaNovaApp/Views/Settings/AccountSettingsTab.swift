@@ -6,13 +6,16 @@ struct AccountSettingsTab: View {
 
     var body: some View {
         Form {
-            if let user = viewModel.sessionStore.session?.user {
+            if let session = viewModel.sessionStore.session, let user = session.user {
                 Section("로그인됨") {
                     LabeledContent("이름", value: user.displayName)
                     if let email = user.email {
                         LabeledContent("이메일", value: email)
                     }
-                    if let provider = user.appMetadata?.provider {
+                    // `lastProvider`(클라이언트 추적값)가 우선. 같은 이메일로 다른 provider로
+                    // 로그인하는 경우 Supabase의 `app_metadata.provider`는 *최초 가입 시* provider라
+                    // 잘못된 값이 나올 수 있어서다. 둘 다 없으면 표시 생략.
+                    if let provider = session.lastProvider ?? user.appMetadata?.provider {
                         LabeledContent("로그인 방식", value: provider.capitalized)
                     }
                 }

@@ -64,4 +64,26 @@ enum Config {
 
     /// 세션 저장 키.
     static let sessionKeychainKey = "supabase.session"
+
+    // MARK: - UserDefaults
+
+    /// 사용자 설정 토글의 키와 타입 안전한 read/write 헬퍼.
+    /// `@AppStorage`는 View에서만 동작하므로 ViewModel용으로 직접 helper 제공.
+    enum UD {
+        // 설정 토글 키들 — bundle id 도메인 안에서 충돌 방지를 위해 prefix 사용.
+        static let showMenuBarIcon = "settings.showMenuBarIcon"
+        static let hotkeyEnabled = "settings.hotkeyEnabled"
+        static let didConfirmMenuBarHide = "settings.didConfirmMenuBarHide"
+
+        /// "키 없음"과 "false"를 구분 — `object(forKey:)`가 nil이면 default 반환.
+        static func bool(_ key: String, default def: Bool) -> Bool {
+            let defaults = UserDefaults.standard
+            guard defaults.object(forKey: key) != nil else { return def }
+            return defaults.bool(forKey: key)
+        }
+
+        static func setBool(_ value: Bool, forKey key: String) {
+            UserDefaults.standard.set(value, forKey: key)
+        }
+    }
 }

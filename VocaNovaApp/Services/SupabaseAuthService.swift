@@ -74,7 +74,8 @@ final class SupabaseAuthService: NSObject {
             accessToken: access,
             refreshToken: refresh,
             expiresAt: Date().timeIntervalSince1970 + expiresIn,
-            user: nil
+            user: nil,
+            lastProvider: "google"
         )
 
         // user 정보 채워넣기 (best-effort).
@@ -102,6 +103,8 @@ final class SupabaseAuthService: NSObject {
             controller.performRequests()
         }
 
+        Log.auth.info("Apple identity token received (\(identityToken.count) chars), exchanging with Supabase")
+
         // identityToken + raw nonce를 Supabase에 교환.
         let bodyDict: [String: String] = [
             "id_token": identityToken,
@@ -117,11 +120,15 @@ final class SupabaseAuthService: NSObject {
         )
         let (data, response) = try await http.data(for: request)
         guard 200..<300 ~= response.statusCode else {
-            let text = String(data: data, encoding: .utf8) ?? ""
+            let text = String(data: data, encoding: .utf8) ?? "<empty>"
+            // 디버깅을 위해 응답 바디를 로그에 남김. 실패 사유가 거의 항상 여기 들어 있다
+            // (예: "provider not enabled", "invalid client id", "invalid nonce" 등).
+            Log.auth.error("Supabase id_token exchange failed (\(response.statusCode)): \(text, privacy: .public)")
             throw AppError.supabaseHTTP(response.statusCode, text)
         }
 
         var session = try await decodeSession(data: data)
+        session.lastProvider = "apple"
         session.user = try? await fetchUser(accessToken: session.accessToken)
         Log.auth.info("Apple sign-in success — token=\(Log.redacted(session.accessToken), privacy: .public)")
         return session
@@ -238,9 +245,26 @@ extension SupabaseAuthService: ASAuthorizationControllerDelegate, ASAuthorizatio
 
     nonisolated func authorizationController(controller: ASAuthorizationController,
                                              didCompleteWithError error: Error) {
+        // ns 에러 코드도 함께 로깅 — ASAuthorizationError는 .failed (1000)이 가장 흔하고,
+        // 보통 (a) Sign in with Apple capability 미설정 (b) Apple Developer 측 Service ID 미등록
+        // (c) 사인되지 않은 dev 빌드 또는 nonce 불일치가 원인이다.
+        let nsError = error as NSError
+        Log.auth.error("Apple authorization failed — domain=\(nsError.domain, privacy: .public) code=\(nsError.code) desc=\(error.localizedDescription, privacy: .public)")
+
         MainActor.assumeIsolated {
-            if let err = error as? ASAuthorizationError, err.code == .canceled {
-                appleSignInContinuationToken?.resume(throwing: AppError.authCanceled)
+            if let err = error as? ASAuthorizationError {
+                switch err.code {
+                case .canceled:
+                    appleSignInContinuationToken?.resume(throwing: AppError.authCanceled)
+                case .failed:
+                    appleSignInContinuationToken?.resume(throwing: AppError.unknown(
+                        "Apple 로그인이 실패했어요. Sign in with Apple capability와 Apple Developer 설정을 확인해주세요. (코드 \(err.code.rawValue))"
+                    ))
+                default:
+                    appleSignInContinuationToken?.resume(throwing: AppError.unknown(
+                        "Apple 로그인 오류 (코드 \(err.code.rawValue)): \(error.localizedDescription)"
+                    ))
+                }
             } else {
                 appleSignInContinuationToken?.resume(throwing: AppError.unknown(error.localizedDescription))
             }

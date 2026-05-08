@@ -6,7 +6,7 @@ final class SettingsWindowController: NSWindowController {
 
     init(environment: AppEnvironment) {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 480, height: 360),
+            contentRect: NSRect(x: 0, y: 0, width: 480, height: 420),
             styleMask: [.titled, .closable, .fullSizeContentView],
             backing: .buffered,
             defer: false
@@ -17,9 +17,15 @@ final class SettingsWindowController: NSWindowController {
 
         super.init(window: window)
 
+        // AppDelegate가 init 시 menuBarVisibilitySetter를 채워준다.
+        // 만약 미할당이면 토글이 no-op 처리되어 안전하다.
+        let menuBarSetter = environment.menuBarVisibilitySetter ?? { _ in }
+
         let viewModel = SettingsViewModel(
             sessionStore: environment.sessionStore,
-            hotkey: environment.hotkeyService
+            hotkey: environment.hotkeyService,
+            launchAtLogin: environment.launchAtLogin,
+            onMenuBarVisibilityChanged: menuBarSetter
         )
         let auth = AuthViewModel(sessionStore: environment.sessionStore)
 

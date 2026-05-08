@@ -23,8 +23,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         environment = AppEnvironment()
         popupController = PopupWindowController(environment: environment)
 
-        setupStatusItem()
+        // SettingsViewModel이 "메뉴바 표시" 토글을 변경하면 우리에게 콜백.
+        environment.menuBarVisibilitySetter = { [weak self] visible in
+            self?.setMenuBarIconVisible(visible)
+        }
+
+        // 영속된 메뉴바 표시 상태 적용 (기본 true).
+        let visibleAtLaunch = Config.UD.bool(Config.UD.showMenuBarIcon, default: true)
+        setMenuBarIconVisible(visibleAtLaunch)
+
         registerHotkey()
+
+        // 단축키 활성/비활성은 register() *다음에* 적용해야 한다.
+        let hotkeyOnAtLaunch = Config.UD.bool(Config.UD.hotkeyEnabled, default: true)
+        environment.hotkeyService.setEnabled(hotkeyOnAtLaunch)
+
         observeURLCallback()
 
         // 첫 실행 또는 AX 권한이 없으면 Onboarding 표시.
@@ -37,9 +50,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         false  // 메뉴바 전용 — 마지막 창 닫혀도 종료 안 함.
     }
 
+    /// Dock 아이콘 클릭 시(메뉴바 숨김 사용자의 안전망) 설정창을 자동으로 띄움.
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
+        if !hasVisibleWindows {
+            showSettings()
+        }
+        return true
+    }
+
     // MARK: - Status item
 
-    private func setupStatusItem() {
+    /// 메뉴바 아이콘을 보일지 숨길지 토글.
+    /// - 보이기: NSStatusItem 생성 + activation policy = .accessory (Dock 아이콘 없음, LSUIElement 기본 동작)
+    /// - 숨기기: NSStatusItem 제거 + activation policy = .regular (Dock 아이콘으로 폴백)
+    func setMenuBarIconVisible(_ visible: Bool) {
+        if visible {
+            showStatusItem()
+            NSApp.setActivationPolicy(.accessory)
+        } else {
+            hideStatusItem()
+            NSApp.setActivationPolicy(.regular)
+        }
+        log.info("menu bar icon \(visible ? "shown" : "hidden", privacy: .public)")
+    }
+
+    private func showStatusItem() {
+        guard statusItem == nil else { return }  // idempotent
+
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = item.button {
             // 시스템 심볼을 사용해 light/dark 자동 대응.
@@ -71,6 +108,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         item.menu = menu
 
         statusItem = item
+    }
+
+    private func hideStatusItem() {
+        if let item = statusItem {
+            NSStatusBar.system.removeStatusItem(item)
+        }
+        statusItem = nil
     }
 
     // MARK: - Hotkey

@@ -16,6 +16,6 @@ struct SettingsView: View {
                 .tabItem { Label("계정", systemImage: "person.crop.circle") }
         }
         .padding(20)
-        .frame(width: 480, height: 360)
+        .frame(width: 480, height: 420)
     }
 }

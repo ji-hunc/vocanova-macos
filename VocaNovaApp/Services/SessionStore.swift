@@ -64,7 +64,9 @@ final class SessionStore: ObservableObject {
 
         let task = Task<SupabaseSession, Error> { [weak self] in
             guard let self else { throw AppError.unknown("self 해제됨") }
-            let refreshed = try await self.auth.refresh(refreshToken: current.refreshToken)
+            var refreshed = try await self.auth.refresh(refreshToken: current.refreshToken)
+            // refresh 응답엔 provider 정보가 없으니 직전 세션의 lastProvider를 보존.
+            refreshed.lastProvider = current.lastProvider
             self.setSession(refreshed)
             return refreshed
         }

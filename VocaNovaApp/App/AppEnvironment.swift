@@ -17,6 +17,11 @@ final class AppEnvironment {
     let hotkeyService: HotkeyService
     let audioPlayer: AudioPlayer
     let selectionReader: SelectionReader
+    let launchAtLogin: LaunchAtLoginService
+
+    /// AppDelegate가 자기 메서드를 주입한다. SettingsViewModel이 이걸 호출해
+    /// 메뉴바 아이콘 표시/숨김을 토글한다. AppDelegate가 만들어지지 않은 시점엔 nil.
+    var menuBarVisibilitySetter: ((Bool) -> Void)?
 
     init() {
         let httpClient = HTTPClient()
@@ -31,6 +36,7 @@ final class AppEnvironment {
         let accessibility = AccessibilityService()
         let clipboard = ClipboardService()
         let reader = SelectionReader(accessibility: accessibility, clipboard: clipboard)
+        let launchAtLogin = LaunchAtLoginService()
 
         self.httpClient = httpClient
         self.keychain = keychain
@@ -42,5 +48,6 @@ final class AppEnvironment {
         self.hotkeyService = hotkey
         self.audioPlayer = audio
         self.selectionReader = reader
+        self.launchAtLogin = launchAtLogin
     }
 }

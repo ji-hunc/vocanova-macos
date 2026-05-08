@@ -9,6 +9,10 @@ import SwiftUI
 final class HotkeyService {
     private var registered = false
 
+    /// 단축키 바인딩이 활성 상태인지. 핸들러 자체는 항상 등록되어 있고,
+    /// 라이브러리의 enable/disable로 키 입력 매칭 자체를 토글한다.
+    private(set) var isEnabled: Bool = true
+
     /// 사용자가 한 번도 변경한 적 없으면 기본값(⌘⇧F) 적용.
     func setDefaultIfUnset() {
         if KeyboardShortcuts.getShortcut(for: .lookupSelection) == nil {
@@ -25,6 +29,18 @@ final class HotkeyService {
         registered = true
         KeyboardShortcuts.onKeyDown(for: .lookupSelection, action: handler)
         Log.hotkey.info("hotkey registered: \(self.currentDescription, privacy: .public)")
+    }
+
+    /// 단축키 바인딩 활성/비활성 토글.
+    /// 핸들러 등록은 그대로 유지되고 사용자가 녹화한 키 조합도 보존된다 — 매칭만 멈춤.
+    func setEnabled(_ enabled: Bool) {
+        if enabled {
+            KeyboardShortcuts.enable(.lookupSelection)
+        } else {
+            KeyboardShortcuts.disable(.lookupSelection)
+        }
+        self.isEnabled = enabled
+        Log.hotkey.info("hotkey \(enabled ? "enabled" : "disabled", privacy: .public)")
     }
 
     /// 현재 단축키의 사람-읽기용 표현. 설정 화면 등에서 사용.
