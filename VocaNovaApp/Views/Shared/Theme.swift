@@ -12,6 +12,11 @@ enum Theme {
     static let border = Color(red: 0xE5 / 255, green: 0xE7 / 255, blue: 0xEB / 255)
     static let exampleBg = Color(red: 0xF7 / 255, green: 0xF8 / 255, blue: 0xFA / 255)
 
+    /// 저장 완료 상태(성공) 표시용. 진한 초록 — 흰 글씨와 충분한 대비.
+    static let success = Color(red: 0x16 / 255, green: 0xA3 / 255, blue: 0x4A / 255)
+    /// 에러/재시도 상태 표시용 — 흰 글씨와 충분한 대비.
+    static let danger = Color(red: 0xDC / 255, green: 0x35 / 255, blue: 0x45 / 255)
+
     // MARK: - Spacing / radius
     static let cornerRadius: CGFloat = 12
     static let chipRadius: CGFloat = 6

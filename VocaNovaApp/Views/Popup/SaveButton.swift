@@ -10,15 +10,17 @@ struct SaveButton: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 4) {
+            HStack(spacing: 5) {
                 icon
                 Text(label)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: 12, weight: .semibold))
             }
-            .foregroundStyle(foreground)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .foregroundStyle(.white)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
             .background(background, in: Capsule())
+            // 비활성 상태(saved/saving)에서도 색상은 그대로 유지하고 살짝 dim만.
+            .opacity(isDisabled ? 0.92 : 1.0)
         }
         .buttonStyle(.plain)
         .disabled(isDisabled)
@@ -27,7 +29,7 @@ struct SaveButton: View {
 
     private var label: String {
         switch state {
-        case .ready: return isSignedIn ? "단어장에 저장" : "단어장에 저장"
+        case .ready: return "단어장에 저장"
         case .saving: return "저장 중…"
         case .saved: return "저장됨"
         case .alreadySaved: return "이미 저장됨"
@@ -38,23 +40,22 @@ struct SaveButton: View {
     @ViewBuilder
     private var icon: some View {
         switch state {
-        case .ready, .error: Image(systemName: "plus")
-        case .saving: ProgressView().controlSize(.mini)
-        case .saved, .alreadySaved: Image(systemName: "checkmark")
+        case .ready: Image(systemName: "plus").font(.system(size: 11, weight: .bold))
+        case .error: Image(systemName: "arrow.clockwise").font(.system(size: 11, weight: .bold))
+        case .saving: ProgressView().controlSize(.mini).tint(.white)
+        case .saved, .alreadySaved: Image(systemName: "checkmark").font(.system(size: 11, weight: .bold))
         }
     }
 
-    private var foreground: Color {
-        switch state {
-        case .saved, .alreadySaved: return .white
-        default: return Theme.accent
-        }
-    }
-
+    /// 모든 상태에서 흰 글씨를 쓰므로, 배경만 상태별로 분기.
+    /// - ready/saving: primary accent (파랑)
+    /// - saved/alreadySaved: success (초록)
+    /// - error: danger (빨강)
     private var background: Color {
         switch state {
-        case .saved, .alreadySaved: return Theme.accent
-        default: return Theme.accentSoft
+        case .ready, .saving: return Theme.accent
+        case .saved, .alreadySaved: return Theme.success
+        case .error: return Theme.danger
         }
     }
 

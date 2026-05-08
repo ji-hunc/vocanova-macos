@@ -11,11 +11,24 @@ struct PopupView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.sectionSpacing) {
 
-            // 우상단 액션 (저장/로그인 카드).
-            topActions
+            // 단어 헤더 + 우측 저장 버튼 — 같은 줄.
+            HStack(alignment: .center, spacing: 8) {
+                WordHeaderView(snapshot: snapshot)
+                Spacer(minLength: 8)
+                SaveButton(state: popup.saveState,
+                           isSignedIn: session.isSignedIn) {
+                    popup.saveCurrentWord()
+                }
+                .layoutPriority(1)  // 단어가 길어도 버튼이 잘리지 않도록
+            }
 
-            // 단어 헤더.
-            WordHeaderView(snapshot: snapshot)
+            // 미로그인 상태에서 저장 시도 시 펼쳐지는 인라인 로그인 카드.
+            if popup.showLoginCard {
+                LoginMenu(auth: auth) {
+                    popup.showLoginCard = false
+                }
+                .transition(.opacity)
+            }
 
             // 발음 (US/UK + 스피커).
             if !snapshot.pronunciations.isEmpty {
@@ -39,25 +52,6 @@ struct PopupView: View {
             footer
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    @ViewBuilder
-    private var topActions: some View {
-        VStack(alignment: .trailing, spacing: 6) {
-            HStack {
-                Spacer()
-                SaveButton(state: popup.saveState,
-                           isSignedIn: session.isSignedIn) {
-                    popup.saveCurrentWord()
-                }
-            }
-            if popup.showLoginCard {
-                LoginMenu(auth: auth) {
-                    popup.showLoginCard = false
-                }
-                .transition(.opacity)
-            }
-        }
     }
 
     @ViewBuilder

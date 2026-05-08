@@ -2,26 +2,17 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <!--
-      App Sandbox는 비활성화한다.
-      이유: AXUIElement로 다른 프로세스의 선택 텍스트를 읽으려면 비-샌드박스 환경이 필요하다.
-      Trade-off: Mac App Store에는 직접 출시할 수 없다. Developer ID 사인 + Notarization으로 직배포.
-    -->
-    <key>com.apple.security.app-sandbox</key>
-    <false/>
-
-    <!-- Sign in with Apple capability (Apple 로그인을 위해 필수) -->
-    <key>com.apple.developer.applesignin</key>
-    <array>
-        <string>Default</string>
-    </array>
-
-    <!-- Hardened Runtime 관련: JIT 컴파일 비허용 (필요 없음) -->
-    <key>com.apple.security.cs.allow-jit</key>
-    <false/>
-
-    <!-- 라이브러리 검증 유지 (Apple 표준) -->
-    <key>com.apple.security.cs.disable-library-validation</key>
-    <false/>
+	<key>com.apple.developer.applesignin</key>
+	<array>
+		<string>Default</string>
+	</array>
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+	<key>com.apple.security.network.client</key>
+	<true/>
+	<key>com.apple.security.cs.allow-jit</key>
+	<false/>
+	<key>com.apple.security.cs.disable-library-validation</key>
+	<false/>
 </dict>
 </plist>
