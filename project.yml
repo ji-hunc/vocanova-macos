@@ -9,15 +9,18 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.10"
-    DEVELOPMENT_TEAM: ""             # ← Xcode에서 본인 팀으로 변경
+    DEVELOPMENT_TEAM: "QKMR36DFCB" # ← Xcode에서 본인 팀으로 변경
     ENABLE_HARDENED_RUNTIME: YES
     CODE_SIGN_STYLE: Automatic
     CODE_SIGN_IDENTITY: "Apple Development"
     MACOSX_DEPLOYMENT_TARGET: "14.0"
     # Xcode 15+의 Debug dylib 분리는 .app을 다른 경로로 복사하면 dylib/리소스 경로가
-    # 깨져서 SPM `Bundle.module`이 실패한다. 로컬 설치(/Applications) 시나리오를
-    # 지원해야 하므로 Debug에서도 단일 바이너리로 빌드.
-    ENABLE_DEBUG_DYLIB_SUPPORT: NO
+    # 깨져서 SPM `Bundle.module`이 실패한다. 또한 stub+dylib 구조는 TCC가 코드
+    # identity를 안정적으로 해석하지 못하게 만들어 손쉬운 사용 자동 등록(prompt path)을
+    # 거부시키는 부작용이 있다. 두 문제 모두를 막기 위해 Debug에서도 단일 바이너리로 빌드.
+    # 정확한 키는 `ENABLE_DEBUG_DYLIB` (다른 비슷한 이름 `ENABLE_DEBUG_DYLIB_SUPPORT`는
+    # 효과 없는 misnomer — `xcodebuild -showBuildSettings`로 확인됨).
+    ENABLE_DEBUG_DYLIB: NO
 
 packages:
   KeyboardShortcuts:
