@@ -5,7 +5,9 @@
 
 같은 Supabase 백엔드를 공유하는 [크롬 익스텐션(`voca-extension`)](../voca-extension) / [iOS 앱(`VocaNova`)](../VocaNova) 과 단어장이 자동으로 동기화됩니다.
 
-<!-- 스크린샷 영역 -->
+## 실행화면
+
+<!-- 스크린샷 추가 -->
 
 ## 주요 기능
 
