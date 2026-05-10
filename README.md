@@ -7,7 +7,9 @@
 
 ## 실행화면
 
-<!-- 스크린샷 추가 -->
+<img width="1276" height="979" alt="스크린샷 2026-05-10 오후 5 20 44" src="https://github.com/user-attachments/assets/c127ec14-8037-4946-ba14-160f01334c86" />
+<img width="972" height="620" alt="스크린샷 2026-05-10 오후 5 23 10" src="https://github.com/user-attachments/assets/64bdad18-bfb1-4d6f-a077-d2242b8e2fc1" />
+<img width="592" height="584" alt="스크린샷 2026-05-10 오후 5 21 06" src="https://github.com/user-attachments/assets/6758a4a2-3b24-45cf-89ae-03751b92a7d9" />
 
 ## 주요 기능
 
