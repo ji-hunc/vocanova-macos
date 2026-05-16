@@ -64,8 +64,9 @@ targets:
         ENABLE_HARDENED_RUNTIME: YES
         # App Sandbox는 AX API와 호환되지 않아 외부 배포 전환 시 끔. Hardened Runtime은 유지.
         ENABLE_APP_SANDBOX: NO
-        # Provisioning Profile은 Phase B에서 발급 후 이름 채워넣기.
-        # PROVISIONING_PROFILE_SPECIFIER: "VocaNova Developer ID"
+        # Developer ID Provisioning Profile. Sign in with Apple entitlement이
+        # PP를 요구하므로 외부 배포에서도 필수. developer.apple.com에서 발급.
+        PROVISIONING_PROFILE_SPECIFIER: "VocaNova Developer ID"
         GENERATE_INFOPLIST_FILE: NO
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
